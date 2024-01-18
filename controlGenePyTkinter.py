@@ -1,8 +1,9 @@
 import controlGenePyCli
 from tkinter import *
+import tkinter.messagebox
 from tkinter import ttk
 
-myGene = controlGenePyCli.geneControler()
+myGene = controlGenePyCli.geneControler(simul=True)
 ans = myGene.connect()
 if not ans:
     msg = myGene.messageConnection
@@ -34,6 +35,16 @@ cpt = 0
 newValues = False
 def setNewValues():
     global newValues
+    powerCons = myGene.vals[myGene.addToIndex[0xB2]]
+    powerMin = myGene.vals[myGene.addToIndex[0x96]]
+    powerMax = myGene.vals[myGene.addToIndex[0x97]]
+    flowCons = myGene.vals[myGene.addToIndex[0xB3]]
+    flowMin = myGene.vals[myGene.addToIndex[0xA0]]
+    flowMax = myGene.vals[myGene.addToIndex[0xA1]]
+    print(powerMin,powerCons,powerMax)
+    if powerCons<powerMin or powerCons>powerMax:
+        tkinter.messagebox.showinfo("","Given data inconsistent")
+        return                          
     newValues = True
     
 def watch():
@@ -44,7 +55,7 @@ def watch():
     cpt += 1
     if newValues:
         newValues = False
-        print("je dois affecetr les registres de consignes")
+        print("je dois affecter les registres de consignes")
     canvasValues.itemconfig(ledVal,fill=color)
     canvasValues.itemconfig(powerVal,text="%d"%myGene.vals[myGene.addToIndex[0x6B]])
     canvasValues.itemconfig(flowVal,text="%d"%myGene.vals[myGene.addToIndex[0x68]])
@@ -107,5 +118,7 @@ tensionVal = canvasValues.create_text(3*w2/4+5,11*(h1-h2)/nl,anchor="c",text="44
 # pour que le watchdog s'arrete quand on ferme le fenetre principale
 root.protocol("WM_DELETE_WINDOW",lambda : (root.after_cancel(watch),root.destroy()))
 # exit(123)
+myGene.fakeValues[myGene.addToIndex[0xB2]]= 1000
+canvasValues.itemconfig(powerLab,text="%d"%myGene.fakeValues[myGene.addToIndex[0xB2]] )
 watch()
 root.mainloop()
