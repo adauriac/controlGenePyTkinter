@@ -2,6 +2,7 @@ import controlGenePyCli
 from tkinter import *
 import tkinter.messagebox
 from tkinter import ttk
+import sys
 
 """
 Sorties
@@ -12,6 +13,43 @@ Current     Ox7f             canvasValues.itemconfig(currentVal
 Tension     0x72             canvasValues.itemconfig(tensionVal
 """
 
+class LED(Canvas):
+    def __init__(self, master=None,R=10, **kwargs):
+        self.R = R
+        super().__init__(master, width=2*R, height=2*R,  **kwargs)
+        # tkinter.messagebox.showinfo("titre","Creation LEDWidget %d"%R)
+        self.state = False
+        self.draw()
+
+    def draw(self):
+        color = "green" if self.state else "gray"
+        # self.delete("all")
+        R = self.R
+        self.create_oval(2, 2, 2*R+2, 2*R+2, width=0, fill=color, outline=color)
+
+    def set_state(self, state):
+        self.state = state
+        self.draw()
+
+class LEDBttn(Canvas):
+    def __init__(self, master=None,R=10,callBack=None, **kwargs):
+        self.R = R
+        self.callBack = callBack
+        super().__init__(master, width=2*R, height=2*R,  **kwargs)
+        # tkinter.messagebox.showinfo("titre","Creation LEDWidget %d"%R)
+        self.state = False
+        self.draw()
+        self.bind("<Button-1>",lambda event:self.callBack(self))
+
+    def draw(self):
+        color = "green" if self.state else "gray"
+        # self.delete("all")
+        R = self.R
+        self.create_oval(2, 2, 2*R+2, 2*R+2, width=6, fill=color, outline=color)
+
+    def set_state(self, state):
+        self.state = state
+        self.draw()
 
 class LEDWidget(Canvas):
     def init(self, master=None, **kwargs):
@@ -61,7 +99,7 @@ def watch():
 ############################################################################
 #                           EN AVANT SIMONE                                #
 ############################################################################
-myGene = controlGenePyCli.geneControler(simul=True)
+myGene = controlGenePyCli.geneControler(simul=len(sys.argv)!=1)
 ans = myGene.connect()
 if not ans:
     msg = myGene.messageConnection
@@ -78,23 +116,31 @@ w1 = 250 # 200
 h1 = 520 #4*120
 w2 = w1
 h2 = h1/2
+w = 250
+h  = 250
 
 # DISPOSITION GENERALE
 colorConsigne = '#FEF0F0'
 colorBoutonLed = '#F0F0F0'
 colorValues = '#F0FEF0'
-canvasBoutonLed = Canvas(root,width=w1,height=h1,background=colorBoutonLed)
-frameBoutonLed = Frame(root,width=w1,height=h1,background=colorBoutonLed)
-canvasConsignes = Canvas(root,width=w2,height=h2,background=colorConsigne)
-frameConsignes = Frame(root,width=w2,height=h2,background=colorConsigne)
-canvasValues = Canvas(root,width=w2,height=h1-h2,background=colorValues)
-frameValues = Frame(root,width=w2,height=h1-h2,background=colorValues)
-canvasBoutonLed.grid(row=0,column=0,rowspan=2)
-frameBoutonLed.grid(row=0,column=0,rowspan=2)
+canvasBoutonLed = Canvas(root,width=w,height=h,background=colorBoutonLed)
+frameBoutonLed = Frame(root,width=w,height=h,background=colorBoutonLed)
+canvasConsignes = Canvas(root,width=w,height=h,background=colorConsigne)
+frameConsignes = Frame(root,width=w,height=h,background=colorConsigne)
+canvasValues = Canvas(root,width=w,height=h,background=colorValues)
+frameValues = Frame(root,width=w,height=h,background=colorValues)
+canvasLogo = Canvas(root,width=w,height=h);
+canvasBoutonLed.grid(row=0,column=0)#,rowspan=2)
+frameBoutonLed.grid(row=0,column=0)#,rowspan=2)
 canvasConsignes.grid(row=0,column=1)
 frameConsignes.grid(row=0,column=1)
 canvasValues.grid(row=1,column=1)
 # frameValues.grid(row=1,column=1)
+canvasLogo.grid(row=1,column=0)
+
+# LOGO
+img = PhotoImage(file="logo.png")
+canvasLogo.create_image(152,130,image=img)
 
 # CONSIGNES
 Label(frameConsignes,text="Power (W)",background=colorConsigne).grid(column=0,row=0)
@@ -145,27 +191,28 @@ currentVal = canvasValues.create_text(3*w2/4+5,9*(h1-h2)/nl,anchor="center",text
 tensionVal = canvasValues.create_text(3*w2/4+5,11*(h1-h2)/nl,anchor="c",text="444")
 
 # BOUTON-LED
-butGenerator = Label(frameBoutonLed,text="Generator",background=colorBoutonLed)
-butGaz = Label(frameBoutonLed,text="Gaz",background=colorBoutonLed)
-butPlasma = Label(frameBoutonLed,text="Plasma",background=colorBoutonLed) 
-butEmergencyStop = Label(frameBoutonLed,text="Emergency stop",background=colorBoutonLed)
-butCritcalDefect = Label(frameBoutonLed,text="Critical defect",background=colorBoutonLed)
-butState = Label(frameBoutonLed,text="State",background=colorBoutonLed)
+Label(frameBoutonLed,text="Generator",background=colorBoutonLed,height=2).grid(column=0,row=0)
+Label(frameBoutonLed,text="Gaz",background=colorBoutonLed,height=2).grid(column=0,row=1)
+Label(frameBoutonLed,text="Plasma",background=colorBoutonLed,height=2).grid(column=0,row=2)
+Label(frameBoutonLed,text="Emergency stop",background=colorBoutonLed,height=2).grid(column=0,row=3)
+Label(frameBoutonLed,text="Critical defect",background=colorBoutonLed,height=2).grid(column=0,row=4)
+Label(frameBoutonLed,text="State",background=colorBoutonLed,height=2).grid(column=0,row=5)
+butGenerator = LEDBttn(frameBoutonLed)
+butGaz =  LEDBttn(frameBoutonLed)
+butPlasma = LEDBttn(frameBoutonLed)
+butEmergencyStop = LED(frameBoutonLed)
+butCritcalDefect = LED(frameBoutonLed) 
+butState = LED(frameBoutonLed)
 butGenerator.grid(column=1,row=0)
 butGaz.grid(column=1,row=1)
 butPlasma.grid(column=1,row=2)
 butEmergencyStop.grid(column=1,row=3)
 butCritcalDefect.grid(column=1,row=4)
 butState.grid(column=1,row=5)
-led = Led(frameBoutonLed).grid(column=1,row=0)
 
-input("? ")
+# input("? ")
 # pour que le watchdog s'arrete quand on ferme le fenetre principale
 root.protocol("WM_DELETE_WINDOW",lambda : (root.after_cancel(watch),root.destroy()))
-# exit(123)
-myGene.fakeValues[myGene.addToIndex[0xB2]]= 1000
-canvasValues.itemconfig(powerLab,text="%d"%myGene.fakeValues[myGene.addToIndex[0xB2]] )
-
 cpt = 0
 newValues = False
 watch()
