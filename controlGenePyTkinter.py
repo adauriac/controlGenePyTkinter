@@ -5,6 +5,10 @@ from tkinter import ttk
 import sys
 
 """
+appel:
+depuis msys2: /mingw64/bin/python controlGenePyTkinter.py
+depuis powershell : C:\Users\ACXYS\AppData\Local\Microsoft\WindowsApps\python.exe .\controlGenePyTkinter.py
+
 Sorties
       addresse registre                 nom du label
 Power       0x6b             canvasValues.itemconfig(powerVal
@@ -140,7 +144,7 @@ canvasLogo.grid(row=1,column=0)
 
 # LOGO
 img = PhotoImage(file="logo.png")
-canvasLogo.create_image(152,130,image=img)
+canvasLogo.create_image(132,130,image=img)
 
 # CONSIGNES
 Label(frameConsignes,text="Power (W)",background=colorConsigne).grid(column=0,row=0)
