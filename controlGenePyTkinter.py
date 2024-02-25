@@ -3,6 +3,7 @@ from tkinter import *
 import tkinter.messagebox
 from tkinter import ttk
 import sys
+import ctypes
 
 """
 appel:
