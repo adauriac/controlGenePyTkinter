@@ -7,7 +7,7 @@ import sys
 """
 appel:
 depuis msys2: /mingw64/bin/python controlGenePyTkinter.py
-depuis powershell : C:\Users\ACXYS\AppData\Local\Microsoft\WindowsApps\python.exe .\controlGenePyTkinter.py
+depuis powershell : C:\\Users\\ACXYS\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe .\\controlGenePyTkinter.py
 
 Sorties
       addresse registre                 nom du label
